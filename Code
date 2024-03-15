@@ -53,9 +53,7 @@ public class motoPHpayrollSystem {
                 taxRate = 0;
             } else if (monthlySalary > 20000.00) {
                 taxRate = 0.2;
-            } else {
-                taxRate = 0.3;
-            }
+            } 
 
             double taxDeduction = monthlySalary * taxRate;
             double pagIbigDeduction = 200.00;
