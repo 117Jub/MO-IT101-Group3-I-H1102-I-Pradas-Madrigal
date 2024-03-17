@@ -1,0 +1,100 @@
+package MotoPHPayrollSystem.jubiler;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.Scanner;
+
+public class finalMotoPHpayrollSystem {
+	public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Employee Number: ");
+        String userInput = scanner.nextLine();
+        String employeeDetails = getEmployeeDetails(userInput);
+
+        if (!employeeDetails.isEmpty()) {
+            String[] employee = employeeDetails.split(";");
+            displayEmployeeInfo(employee);
+            double hoursWorked = calculateHoursWorked();
+            double hourlyRate = parseDoubleDefault(employee[18]);
+            double grossSalary = calculateGrossSalary(hoursWorked, hourlyRate);
+            double sssDeduction = calculateSSSDeduction(grossSalary);
+            double philhealthDeduction = calculatePhilhealthDeduction(grossSalary);
+            double pagibigDeduction = calculatePagibigDeduction(grossSalary);
+            double withholdingTax = calculateWithholdingTax(grossSalary);
+            double netSalary = calculateNetSalary(grossSalary, sssDeduction, philhealthDeduction, pagibigDeduction, withholdingTax);
+            displaySalaryDetails(hoursWorked, grossSalary, sssDeduction, philhealthDeduction, pagibigDeduction, withholdingTax, netSalary);
+        } else {
+            System.out.println("No data found. Please try again.");
+        }
+    }
+
+    public static String getEmployeeDetails(String employeeId) {
+        String path = "/Users/DELL/OneDrive/Desktop/MotorPH Employee Data - Employee Details.csv";
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            reader.readLine(); // Skip the header line
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] row = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (row[0].trim().equals(employeeId)) {
+                    return line.replaceAll(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", ";");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static void displayEmployeeInfo(String[] employee) {
+        System.out.println("Employee ID: " + employee[0]);
+        System.out.println("Name: " + employee[1] + ", " + employee[2]);
+        System.out.println("Birthday: " + employee[3]);
+    }
+
+    public static double calculateHoursWorked() {
+        return 40; // 
+    }
+
+    public static double parseDoubleDefault(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    public static double calculateGrossSalary(double hoursWorked, double hourlyRate) {
+        return hoursWorked * hourlyRate;
+    }
+
+    public static double calculateSSSDeduction(double grossSalary) {
+        return grossSalary * 0.05; // Example: 5% of the gross salary
+    }
+
+    public static double calculatePhilhealthDeduction(double grossSalary) {
+    	 return grossSalary * 0.03;
+    }
+
+    public static double calculatePagibigDeduction(double grossSalary) {
+    	return grossSalary * 0.02;
+    }
+
+    public static double calculateWithholdingTax(double grossSalary) {// Implement your withholding tax calculation logic here
+    	 return grossSalary * 0.10;
+    }
+
+    public static double calculateNetSalary(double grossSalary, double sssDeduction, double philhealthDeduction, double pagibigDeduction, double withholdingTax) {
+        return grossSalary - sssDeduction - philhealthDeduction - pagibigDeduction - withholdingTax;
+    }
+
+    public static void displaySalaryDetails(double hoursWorked, double grossSalary, double sssDeduction, double philhealthDeduction, double pagibigDeduction, double withholdingTax, double netSalary) {
+        System.out.println("Hours Worked: " + hoursWorked);
+        System.out.println("Gross Salary: ₱" + grossSalary);
+        System.out.println("SSS Deduction: ₱" + sssDeduction);
+        System.out.println("Philhealth Deduction: ₱" + philhealthDeduction);
+        System.out.println("Pag-ibig Deduction: ₱" + pagibigDeduction);
+        System.out.println("Withholding Tax: ₱" + withholdingTax);
+        System.out.println("Net Salary: ₱" + netSalary);
+    }
+}
+
